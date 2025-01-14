@@ -10,16 +10,24 @@ import 'izitoast/dist/css/iziToast.min.css';
 const searchForm = document.querySelector('.form');
 const loaderEl = document.querySelector('.loader');
 const searchResults = document.querySelector('.search-result');
+const loadMoreBtn = document.querySelector('.js-load-more');
 
 searchForm.addEventListener('submit', initiateSearch);
 
+let page = 1;
+let q = '';
+let lightbox;
+let totalPages;
+
 function initiateSearch(event) {
   event.preventDefault();
-  const q = event.currentTarget.q.value.trim();
+  q = event.currentTarget.q.value.trim();
   loaderEl.classList.remove('loader-off');
-  searchPhotos(q)
+
+  searchPhotos(q, page)
     .then(photos => {
       searchResults.innerHTML = '';
+      loadMoreBtn.classList.add('is-hidden');
       if (photos.hits.length === 0) {
         iziToast.show({
           message:
@@ -33,7 +41,16 @@ function initiateSearch(event) {
       const photosMarkup = markup(photos);
 
       searchResults.insertAdjacentHTML('beforeend', photosMarkup);
-      const lightbox = new SimpleLightbox('.search-result a', {
+
+      totalPages = parseInt(photos.totalHits / 15);
+
+      if (totalPages > 1) {
+        loadMoreBtn.classList.remove('is-hidden');
+        loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
+        loaderEl.classList.add('loader-off');
+      }
+
+      lightbox = new SimpleLightbox('.search-result a', {
         captionsData: 'alt',
         captionDelay: 250,
       });
@@ -49,4 +66,39 @@ function initiateSearch(event) {
       });
     })
     .finally(() => searchForm.reset());
+}
+
+const onLoadMoreBtnClick = async event => {
+  try {
+    page++;
+
+    const data = await searchPhotos(q, page);
+
+    const photosMarkup = markup(data);
+    searchResults.insertAdjacentHTML('beforeend', photosMarkup);
+    lightbox.refresh();
+
+    if (page === totalPages) {
+      loadMoreBtn.classList.add('is-hidden');
+      loadMoreBtn.removeEventListener('click', onLoadMoreBtnClick);
+      iziToast.show({
+        message: "We're sorry, but you've reached the end of search results.",
+        position: 'topRight',
+        color: 'blue',
+      });
+    }
+    smoothScroll();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+function smoothScroll() {
+  const galleryItem = document.querySelector('.gallery-item');
+  const height = galleryItem.getBoundingClientRect().height;
+
+  window.scrollBy({
+    top: height * 2,
+    behavior: 'smooth',
+  });
 }

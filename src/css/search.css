@@ -52,11 +52,12 @@ button:hover {
 .search-result {
   display: flex;
   flex-wrap: wrap;
+  width: 1228px;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-around;
   gap: 24px;
   align-items: center;
-  margin-top: 24px;
+  margin: 24px auto;
 }
 
 .search-result>li {
@@ -101,3 +102,10 @@ button:hover {
   align-items: center;
 }
 
+.load-more-btn {
+  margin: 40px auto;
+  display: block;
+}
+.load-more-btn.is-hidden {
+  display: none;
+}
