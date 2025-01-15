@@ -2,11 +2,12 @@
 @import url('./base.css');
 @import url('./reset.css');
 
-.search {
+.form {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   width: 100%;
+  gap: 8px;
 }
 
 input {

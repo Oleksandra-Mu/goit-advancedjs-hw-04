@@ -22,6 +22,7 @@ let totalPages;
 function initiateSearch(event) {
   event.preventDefault();
   q = event.currentTarget.q.value.trim();
+  page = 1;
   loaderEl.classList.remove('loader-off');
 
   searchPhotos(q, page)
@@ -33,7 +34,7 @@ function initiateSearch(event) {
           message:
             'Sorry, there are no images matching your search query. Please try again!',
           color: 'red',
-          position: 'topRight',
+          position: 'topCenter',
         });
         loaderEl.classList.add('loader-off');
         return;
@@ -42,7 +43,7 @@ function initiateSearch(event) {
 
       searchResults.insertAdjacentHTML('beforeend', photosMarkup);
 
-      totalPages = parseInt(photos.totalHits / 15);
+      totalPages = Math.ceil(photos.totalHits / 15);
 
       if (totalPages > 1) {
         loadMoreBtn.classList.remove('is-hidden');
@@ -70,6 +71,7 @@ function initiateSearch(event) {
 
 const onLoadMoreBtnClick = async event => {
   try {
+    loaderEl.classList.remove('loader-off');
     page++;
 
     const data = await searchPhotos(q, page);
@@ -81,15 +83,19 @@ const onLoadMoreBtnClick = async event => {
     if (page === totalPages) {
       loadMoreBtn.classList.add('is-hidden');
       loadMoreBtn.removeEventListener('click', onLoadMoreBtnClick);
-      iziToast.show({
-        message: "We're sorry, but you've reached the end of search results.",
-        position: 'topRight',
-        color: 'blue',
-      });
+      setTimeout(() => {
+        iziToast.show({
+          message: "We're sorry, but you've reached the end of search results.",
+          position: 'bottomCenter',
+          color: 'blue',
+        });
+      }, 300);
     }
     smoothScroll();
   } catch (err) {
     console.log(err);
+  } finally {
+    loaderEl.classList.add('loader-off');
   }
 };
 
