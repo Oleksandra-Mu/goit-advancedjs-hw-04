@@ -53,7 +53,7 @@ button:hover {
 .search-result {
   display: flex;
   flex-wrap: wrap;
-  width: 1228px;
+  /* width: 1228px; */
   flex-direction: row;
   justify-content: space-around;
   gap: 24px;
@@ -62,7 +62,7 @@ button:hover {
 }
 
 .search-result>li {
-  width: 360px;
+  /* width: 360px; */
   transition: var(--animation-hover);
   transition-property: transform;
   border: 1px solid var(--gr-cl);
@@ -70,14 +70,6 @@ button:hover {
 
 .search-result>li:hover {
   transform: scale(1.05);
-}
-
-
-.search-result {
-  width: 1228px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
 }
 
 .gallery-image {

@@ -23,11 +23,11 @@ function initiateSearch(event) {
   event.preventDefault();
   q = event.currentTarget.q.value.trim();
   page = 1;
+  searchResults.innerHTML = '';
   loaderEl.classList.remove('loader-off');
 
   searchPhotos(q, page)
     .then(photos => {
-      searchResults.innerHTML = '';
       loadMoreBtn.classList.add('is-hidden');
       if (photos.hits.length === 0) {
         iziToast.show({
@@ -72,6 +72,7 @@ function initiateSearch(event) {
 const onLoadMoreBtnClick = async event => {
   try {
     loaderEl.classList.remove('loader-off');
+    loadMoreBtn.classList.add('is-hidden');
     page++;
 
     const data = await searchPhotos(q, page);
@@ -90,6 +91,8 @@ const onLoadMoreBtnClick = async event => {
           color: 'blue',
         });
       }, 300);
+    } else {
+      loadMoreBtn.classList.remove('is-hidden');
     }
     smoothScroll();
   } catch (err) {
